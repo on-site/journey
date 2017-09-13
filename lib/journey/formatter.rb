@@ -16,7 +16,11 @@ module Journey
 
       match_route(name, constraints) do |route|
         parameterized_parts = extract_parameterized_parts route, options, recall, parameterize
-        next if !name && route.requirements.empty? && route.parts.empty?
+
+        # Skip this route unless a name has been provided or it is a
+        # standard Rails route since we can't determine whether an options
+        # hash passed to url_for matches a Rack application or a redirect.
+        next unless name || route.dispatcher?
 
         missing_keys = missing_keys(route, parameterized_parts)
         next unless missing_keys.empty?
@@ -27,7 +31,10 @@ module Journey
         return [route.format(parameterized_parts), params]
       end
 
-      raise Router::RoutingError.new "missing required keys: #{missing_keys}"
+      message = "No route matches #{Hash[constraints.sort].inspect}"
+      message << " missing required keys: #{missing_keys.sort.inspect}" unless missing_keys.empty?
+
+      raise Router::RoutingError.new message
     end
 
     def clear

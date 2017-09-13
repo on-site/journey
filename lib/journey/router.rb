@@ -16,7 +16,7 @@ module Journey
     class RoutingError < ::StandardError
     end
 
-    VERSION = '2.0.0'
+    VERSION = '1.0.5'
 
     class NullReq # :nodoc:
       attr_reader :env
@@ -130,10 +130,8 @@ module Journey
       routes.concat get_routes_as_head(routes)
 
       routes.sort_by!(&:precedence).select! { |r|
-        r.constraints.all? { |k,v| v === req.send(k) } &&
-          r.verb === req.request_method
+        r.matches?(req)
       }
-      routes.reject! { |r| req.ip && !(r.ip === req.ip) }
 
       routes.map! { |r|
         match_data  = r.path.match(req.path_info)

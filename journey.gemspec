@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name = "journey"
-  s.version = "2.0.0.20120723141804"
+  s.version = "1.0.5"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Aaron Patterson"]
@@ -19,6 +19,8 @@ Gem::Specification.new do |s|
   s.license = "MIT"
   s.summary = "Journey is a router"
   s.test_files = ["test/gtg/test_builder.rb", "test/gtg/test_transition_table.rb", "test/nfa/test_simulator.rb", "test/nfa/test_transition_table.rb", "test/nodes/test_symbol.rb", "test/path/test_pattern.rb", "test/route/definition/test_parser.rb", "test/route/definition/test_scanner.rb", "test/router/test_strexp.rb", "test/router/test_utils.rb", "test/test_route.rb", "test/test_router.rb", "test/test_routes.rb"]
+
+  s.add_dependency 'thread_safe'
 
   if s.respond_to? :specification_version then
     s.specification_version = 3

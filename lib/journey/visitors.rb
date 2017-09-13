@@ -1,9 +1,12 @@
 # encoding: utf-8
+
+require 'thread_safe'
+
 module Journey
   module Visitors
     class Visitor # :nodoc:
-      DISPATCH_CACHE = Hash.new { |h,k|
-        h[k] = "visit_#{k}"
+      DISPATCH_CACHE = ThreadSafe::Cache.new { |h,k|
+        h[k] = :"visit_#{k}"
       }
 
       def accept node
@@ -71,6 +74,34 @@ module Journey
       def visit_GROUP node
         "(#{visit node.left})"
       end
+    end
+
+    class OptimizedPath < Visitor # :nodoc:
+      def accept(node)
+        Array(visit(node))
+      end
+
+      private
+
+        def visit_CAT(node)
+          [visit(node.left), visit(node.right)].flatten
+        end
+
+        def visit_SYMBOL(node)
+          node.left[1..-1].to_sym
+        end
+
+        def visit_STAR(node)
+          visit(node.left)
+        end
+
+        def visit_GROUP(node)
+          []
+        end
+
+        %w{ LITERAL SLASH DOT }.each do |t|
+          class_eval %{ def visit_#{t}(n); n.left; end }, __FILE__, __LINE__
+        end
     end
 
     ###

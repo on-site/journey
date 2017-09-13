@@ -16,12 +16,12 @@ module Journey
     end
 
     def length
-      @routes.length
+      routes.length
     end
     alias :size :length
 
     def last
-      @routes.last
+      routes.last
     end
 
     def each(&block)
@@ -30,6 +30,7 @@ module Journey
 
     def clear
       routes.clear
+      named_routes.clear
     end
 
     def partitioned_routes
